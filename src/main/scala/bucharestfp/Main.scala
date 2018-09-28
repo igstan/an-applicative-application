@@ -1,12 +1,13 @@
 package bucharestfp
 
-import java.time.Instant
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
+import bucharestfp.consumer.{ MetricAConsumer, MetricBConsumer }
 import bucharestfp.http.HTTPClient
-import bucharestfp.opentsdb.{ OpenTSDBClient, OpenTSDBQuery, OpenTSDBRequest }
+import bucharestfp.opentsdb.OpenTSDBClient
+import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
@@ -18,20 +19,20 @@ object Main {
   def main(args: Array[String]): Unit = {
     val httpClient = new HTTPClient(ws)
     val tsdbClient = new OpenTSDBClient(httpClient)
+    val metricAConsumer = new MetricAConsumer(tsdbClient)
+    val metricBConsumer = new MetricBConsumer(tsdbClient)
 
-    val task =
-      tsdbClient
-        .fetch(OpenTSDBRequest(
-          start = Instant.parse("2018-05-01T00:10:00Z"),
-          end = Instant.parse("2018-05-01T00:10:05Z"),
-          queries = List(
-            OpenTSDBQuery(metric = "metric-a"),
-            OpenTSDBQuery(metric = "metric-b"),
-          )
-        ))
-        .map { response =>
-          println(s"response: $response")
-        }
+    val taskA =
+      metricAConsumer.run.map(total => println(s"Metric A Total: $total"))
+
+    val taskB =
+      metricBConsumer.run.map(total => println(s"Metric B Total: $total"))
+
+    // Sequential HTTP calls.
+    //val task = Task.sequence(List(taskA, taskB)).map(_ => ())
+
+    // Parallel HTTP calls.
+    val task = Task.gather(List(taskA, taskB)).map(_ => ())
 
     try {
       task.runSyncUnsafe(timeout = 5.seconds)
