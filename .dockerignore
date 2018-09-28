@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# Except these:
+!project/*
+!src/*
+!build.sbt
