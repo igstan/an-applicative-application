@@ -6,8 +6,12 @@ scalaVersion := "2.12.7"
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.7")
 
 libraryDependencies ++= Seq(
-  "io.monix"      %% "monix"     % "3.0.0-RC1",
-  "org.typelevel" %% "cats-core" % "1.0.1",
+  "ch.qos.logback"              % "logback-classic"         % "1.2.3",
+  "com.typesafe.play"          %% "play-ahc-ws-standalone"  % "2.0.0-M4",
+  "com.typesafe.play"          %% "play-ws-standalone-json" % "2.0.0-M4",
+  "com.typesafe.scala-logging" %% "scala-logging"           % "3.9.0",
+  "io.monix"                   %% "monix"                   % "3.0.0-RC1",
+  "org.typelevel"              %% "cats-core"               % "1.0.1",
 )
 
 libraryDependencies ++= Seq(
