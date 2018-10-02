@@ -1,17 +1,17 @@
 http POST 'localhost:4242/api/query' << EOF
 {
   "start": "2018/05/01 00:10:00",
-  "end": "2018/05/01 00:10:05",
+  "end": "2018/05/01 00:10:02",
   "timezone": "UTC",
   "queries": [
     {
-      "aggregator": "none",
       "metric": "metric-a",
+      "aggregator": "none",
       "tags": {}
     },
     {
-      "aggregator": "none",
       "metric": "metric-b",
+      "aggregator": "none",
       "tags": {}
     }
   ]
